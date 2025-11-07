@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>TravelBuddy • SRMIST</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#2152ff">
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="./styles.css" rel="stylesheet" />
+  <!-- In-browser PDF (html2canvas + jsPDF) - optional -->
+  <script defer src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">TB</div>
+      <div class="title">
+        <h1>TravelBuddy</h1>
+        <p>Explore SRMIST campuses and nearby gems</p>
+      </div>
+    </div>
+    <div class="actions">
+      <select id="campusSelect" aria-label="Select campus"></select>
+      <div class="search">
+        <input id="searchInput" type="search" placeholder="Search places, e.g., beach, temple..." aria-label="Search destinations"/>
+        <button id="clearSearch" title="Clear search" aria-label="Clear search">✖</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="filters" aria-label="Filters">
+    <div class="chips" id="tripTypeChips" role="group" aria-label="Trip type">
+      <!-- JS will render chips -->
+      <button class="chip active" data-type="All">All</button>
+      <button class="chip" data-type="Friends">Friends</button>
+      <button class="chip" data-type="Family">Family</button>
+      <button class="chip" data-type="Weekday">Weekday</button>
+      <button class="chip" data-type="Weekend">Weekend</button>
+      <button class="chip" data-type="Solo">Solo</button>
+      <button class="chip" data-type="Couple">Couple</button>
+      <button class="chip" data-type="Surprise">Surprise</button>
+    </div>
+    <div class="chips" id="costChips" role="group" aria-label="Cost preference">
+      <!-- JS will render chips -->
+      <button class="chip active" data-cost="All">All</button>
+      <button class="chip" data-cost="Cheap">Cheap</button>
+      <button class="chip" data-cost="Moderate">Moderate</button>
+      <button class="chip" data-cost="Expensive">Expensive</button>
+    </div>
+    <button id="clearFilters" class="link-btn">Reset filters</button>
+  </section>
+
+  <main id="main">
+    <!-- Explore -->
+    <section id="exploreSection" class="screen active" aria-labelledby="exploreTab">
+      <div class="section-head">
+        <h2>Explore near <span id="activeCampusLabel"></span></h2>
+        <p id="resultsCount" class="muted"></p>
+      </div>
+      <div id="destinationsGrid" class="grid"></div>
+    </section>
+
+    <!-- Planner -->
+    <section id="plannerSection" class="screen" aria-labelledby="plannerTab" style="display:none">
+      <div class="section-head">
+        <h2>Your Trip Planner</h2>
+        <p class="muted">Build your plan, view safety contacts, and export as PDF.</p>
+      </div>
+
+      <div class="planner">
+        <!-- Trip form -->
+        <div class="planner-form card">
+          <div class="row">
+            <label for="tripTitle">Trip title</label>
+            <input id="tripTitle" type="text" placeholder="e.g., Chennai Coastal Weekend"/>
+          </div>
+          <div class="row two">
+            <div>
+              <label for="tripDate">Date</label>
+              <input id="tripDate" type="date"/>
+            </div>
+            <div>
+              <label for="tripPeople">Group size</label>
+              <input id="tripPeople" type="number" min="1" value="2"/>
+            </div>
+          </div>
+          <div class="row two">
+            <div>
+              <label for="plannerTripType">Trip type</label>
+              <select id="plannerTripType">
+                <!-- JS populates with all types -->
+              </select>
+            </div>
+            <div>
+              <label for="plannerBudget">Budget</label>
+              <select id="plannerBudget">
+                <!-- JS populates with Cheap/Moderate/Expensive -->
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <label for="tripNotes">Notes</label>
+            <textarea id="tripNotes" rows="3" placeholder="Packing tips, meeting points, etc."></textarea>
+          </div>
+        </div>
+
+        <!-- Selected -->
+        <div class="selected card">
+          <div class="section-head">
+            <h3>Selected Destinations</h3>
+            <button id="clearPlan" class="link-btn">Clear</button>
+          </div>
+          <div id="selectedList" class="selected-list"></div>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary card">
+          <div class="section-head">
+            <h3>Trip Summary</h3>
+            <div class="summary-actions">
+              <button id="saveTripBtn" class="btn">Save Plan</button>
+              <button id="pdfBtn" class="btn primary">Export PDF</button>
+            </div>
+          </div>
+          <div id="tripSummary"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Blog -->
+    <section id="blogSection" class="screen" aria-labelledby="blogTab" style="display:none">
+      <div class="section-head">
+        <h2>TravelBuddy Blog</h2>
+        <p class="muted">Tips, mini-guides, and campus travel stories</p>
+      </div>
+
+      <div class="blog-layout">
+        <div class="card">
+          <h3>Write a post</h3>
+          <div class="row">
+            <label for="blogTitle">Title</label>
+            <input id="blogTitle" type="text" placeholder="Catchy title..." />
+          </div>
+          <div class="row two">
+            <div>
+              <label for="blogCampus">Campus</label>
+              <select id="blogCampus"></select>
+            </div>
+            <div>
+              <label for="blogTags">Tags</label>
+              <input id="blogTags" type="text" placeholder="e.g., beach, food" />
+            </div>
+          </div>
+          <div class="row">
+            <label for="blogContent">Content</label>
+            <textarea id="blogContent" rows="5" placeholder="Share your tips..."></textarea>
+          </div>
+          <button id="postBlogBtn" class="btn primary">Publish</button>
+          <p id="blogPostStatus" class="muted"></p>
+        </div>
+
+        <div class="card">
+          <div class="section-head small">
+            <h3>Latest Posts</h3>
+            <button id="refreshBlogBtn" class="link-btn">Refresh</button>
+          </div>
+          <div id="blogList" class="blog-list"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabbar" role="tablist">
+    <button id="exploreTab" class="tab active" role="tab" aria-controls="exploreSection">Explore</button>
+    <button id="plannerTab" class="tab" role="tab" aria-controls="plannerSection">Planner</button>
+    <button id="blogTab" class="tab" role="tab" aria-controls="blogSection">Blog</button>
+    <button id="feedbackBtn" class="tab" role="button">Feedback</button>
+  </nav>
+
+  <!-- Destination details modal -->
+  <dialog id="destinationModal" class="modal" aria-label="Destination details">
+    <div class="modal-head">
+      <h3 id="modalTitle">Destination</h3>
+      <button id="closeModal" class="icon-btn" aria-label="Close">✖</button>
+    </div>
+    <div id="modalBody"></div>
+  </dialog>
+
+  <!-- Blog modal -->
+  <dialog id="blogModal" class="modal" aria-label="Blog post">
+    <div class="modal-head">
+      <h3 id="blogModalTitle">Post</h3>
+      <button id="closeBlogModal" class="icon-btn" aria-label="Close">✖</button>
+    </div>
+    <div id="blogModalBody"></div>
+  </dialog>
+
+  <!-- Feedback modal -->
+  <dialog id="feedbackModal" class="modal" aria-label="Feedback">
+    <div class="modal-head">
+      <h3>Send Feedback</h3>
+      <button id="closeFeedback" class="icon-btn" aria-label="Close">✖</button>
+    </div>
+    <div class="row" style="padding:12px 14px">
+      <label for="fbName">Name</label>
+      <input id="fbName" type="text" placeholder="Your name"/>
+    </div>
+    <div class="row" style="padding:0 14px 12px">
+      <label for="fbEmail">Email</label>
+      <input id="fbEmail" type="email" placeholder="you@example.com"/>
+    </div>
+    <div class="row" style="padding:0 14px 12px">
+      <label for="fbMessage">Message</label>
+      <textarea id="fbMessage" rows="4" placeholder="Your thoughts..."></textarea>
+    </div>
+    <div style="padding:0 14px 14px">
+      <button id="sendFeedbackBtn" class="btn primary">Send</button>
+      <p id="feedbackStatus" class="muted"></p>
+    </div>
+  </dialog>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
