@@ -13,38 +13,10 @@ TravelBuddy Website is a web application designed to help users plan and organiz
 
 ## Technologies Used
 
-- **Frontend:** (Specify if React, Vue, Angular, etc.)
-- **Backend:** (Specify if Node.js, Django, Flask, etc.)
-- **Database:** (e.g., MongoDB, PostgreSQL, MySQL)
-- **Other:** (Mention APIs, cloud providers, or third-party services)
+- **Frontend:** (HTML, CSS, JS)
+- **Backend:** (Java SpringBoot)
+- **Database:** (MongoDB, MySQL)
 
-## Getting Started
 
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) or relevant backend runtime
-- [npm](https://www.npmjs.com/) or other package manager
-
-### Installation
-
-Clone the repository:
-```bash
-git clone https://github.com/anushkaraks/TravelBuddy-Website.git
-cd TravelBuddy-Website
-```
-
-Install dependencies:
-```bash
-npm install
-```
-
-Configure environment variables as required.
-
-### Running the Application
-
-```bash
-npm start
-```
-or use the appropriate command for your setup.
 
 
