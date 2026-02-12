@@ -17,6 +17,8 @@ TravelBuddy Website is a web application designed to help users plan and organiz
 - **Backend:** (Java SpringBoot)
 - **Database:** (MongoDB, MySQL)
 
+## Link to the website - https://anushkaraks.github.io/TravelBuddy-Website/
+
 
 
 
